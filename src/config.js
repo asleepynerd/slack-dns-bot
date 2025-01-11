@@ -4,7 +4,7 @@ const config = {
   slackToken: process.env.SLACK_TOKEN || "your-slack-token-here",
   cloudflareEmail: process.env.CLOUDFLARE_EMAIL || "your-email@example.com",
   cloudflareApiKey: process.env.CLOUDFLARE_API_KEY || "your-cloudflare-api-key",
-  
+
   cloudflareZones: {
     "is-a-furry.dev": process.env.CLOUDFLARE_ZONE_ID_DEV,
     "is-a-furry.net": process.env.CLOUDFLARE_ZONE_ID_NET,
@@ -20,7 +20,8 @@ const config = {
     "loves-being-a.dev": process.env.CLOUDFLARE_ZONE_ID_LOVES_BEING_A_DEV,
     "cant-be-asked.dev": process.env.CLOUDFLARE_ZONE_ID_CANT_BE_ASKED_DEV,
     "drinks-tea.uk": process.env.CLOUDFLARE_ZONE_ID_DRINKS_TEA_UK,
-    "doesnt-give-a-fuck.org": process.env.CLOUDFLARE_ZONE_ID_DOESNT_GIVE_A_FUCK_ORG
+    "doesnt-give-a-fuck.org":
+      process.env.CLOUDFLARE_ZONE_ID_DOESNT_GIVE_A_FUCK_ORG,
   },
 };
 

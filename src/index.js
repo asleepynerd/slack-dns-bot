@@ -8,6 +8,7 @@ const { addUserDomain, getUserDomains } = require("./utils/storage");
 const fs = require("fs/promises");
 const path = require("path");
 require("dotenv").config();
+const cron = require('node-cron');
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -22,6 +23,98 @@ const loadBlocklist = async () => {
   return content.split("\n").filter(Boolean);
 };
 
+let lastStickyMessageId = null;
+
+const getStickyMessage = () => ({
+  blocks: [
+    {
+      type: "header",
+      text: {
+        type: "plain_text",
+        text: "🌐 Available Domain Registration",
+        emoji: true
+      }
+    },
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: "Want your own custom subdomain? Here's how:"
+      }
+    },
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: "*Available Domains:*\n" +
+          "• `.is-a-furry.dev` / `.is-a-furry.net`\n" +
+          "• `.sleeping.wtf`\n" +
+          "• `.asleep.pw`\n" +
+          "• `.wagging.dev`\n" +
+          "• `.furries.pw`\n" +
+          "• `.fluff.pw`\n" +
+          "• `.floofy.pw`\n" +
+          "• `.died.pw`\n" +
+          "• `.woah.pw`\n" +
+          "• `.trying.cloud`\n" +
+          "• `.loves-being-a.dev`\n" +
+          "• `.cant-be-asked.dev`\n" +
+          "• `.drinks-tea.uk`\n" +
+          "• `.doesnt-give-a-fuck.org`"
+      }
+    },
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: "*How to Register:*\n" +
+          "1. Just type your desired subdomain in the chat (e.g. `mycool.is-a-furry.dev`)\n" +
+          "2. Follow the bot's instructions in DM\n" +
+          "3. Choose record type (A, CNAME, TXT)\n" +
+          "4. Enter your record content\n\n" +
+          "*Note:*\n" +
+          "• Maximum 10 domains per user\n" +
+          "• No 'www' subdomains\n" +
+          "• SSL certificates must be handled by you"
+      }
+    },
+    {
+      type: "context",
+      elements: [
+        {
+          type: "mrkdwn",
+          text: "Need help? Contact <@U082FBF4MV5>"
+        }
+      ]
+    }
+  ]
+});
+
+const updateStickyMessage = async () => {
+  try {
+    if (lastStickyMessageId) {
+      try {
+        await app.client.chat.delete({
+          channel: process.env.SLACK_ANNOUNCEMENT_CHANNEL,
+          ts: lastStickyMessageId
+        });
+      } catch (error) {
+        console.error("Error deleting previous message:", error);
+      }
+    }
+
+    const result = await app.client.chat.postMessage({
+      channel: process.env.SLACK_ANNOUNCEMENT_CHANNEL,
+      ...getStickyMessage()
+    });
+
+    lastStickyMessageId = result.ts;
+  } catch (error) {
+    console.error("Error updating sticky message:", error);
+  }
+};
+
+cron.schedule('0 * * * *', updateStickyMessage);
 
 app.message(async ({ message, client }) => {
   
@@ -582,4 +675,6 @@ app.action("delete_domain_record", async ({ ack, body, client }) => {
 (async () => {
   await app.start();
   console.log("⚡️ Slack bot is running!");
+  await updateStickyMessage();
 })();
+cron.schedule('0 * * * *', updateStickyMessage);

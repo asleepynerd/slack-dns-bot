@@ -1,0 +1,17 @@
+{
+  "name": "slack-dns-bot",
+  "version": "1.0.0",
+  "description": "A Slack bot that manages DNS records via Cloudflare.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@slack/bolt": "^4.2.0",
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "fs-extra": "^11.2.0"
+  },
+  "author": "Your Name",
+  "license": "MIT"
+}

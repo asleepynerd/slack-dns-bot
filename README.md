@@ -1,16 +1,26 @@
-# README.md
+# Slack DNS Bot: Manage DNS Records in Cloudflare
 
-# Slack DNS Bot
+A Slack bot that allows users to manage DNS records through Cloudflare by
+sending commands in Slack.
 
-A Slack bot that allows users to manage DNS records through Cloudflare by sending commands in Slack.
+## Overview
+
+The Slack DNS Bot is a simple and intuitive tool for managing DNS records
+in Cloudflare. With this bot, you can create, update, and delete DNS
+records directly from your Slack channel.
 
 ## Features
 
-- Users can enter domain names and specify DNS records.
-- The bot interacts with the Cloudflare API to create and manage DNS records.
-- Direct messaging support for user interactions.
+- **Domain Management**: Users can enter domain names and specify DNS
+  records.
+- **Cloudflare Integration**: The bot interacts with the Cloudflare API to
+  create and manage DNS records.
+- **Direct Messaging Support**: Users can interact with the bot through
+  direct messages in Slack.
 
 ## Project Structure
+
+Our project is organized into the following directories:
 
 ```
 slack-dns-bot
@@ -27,70 +37,62 @@ slack-dns-bot
 
 ## Setup Instructions
 
-1. Clone the repository:
+### Step 1: Clone the Repository
 
-   ```
-   git clone https://github.com/asleepynerd/slack-dns-bot.git
-   cd slack-dns-bot
-   ```
+Clone this repository using the following command:
 
-2. Install dependencies:
+```bash
+git clone https://github.com/asleepynerd/slack-dns-bot.git
+cd slack-dns-bot
+```
 
-   ```
-   yarn
-   ```
+### Step 2: Install Dependencies
 
-3. Configure your config:
+Install the required dependencies using yarn:
 
-   ```bash
-   cp src/config.example.js src/config.js
-   cp .env.example .env
-   ```
+```
+yarn
+```
 
-4. Fill in the required values in the `.env` file:
+### Step 3: Configure Your Bot
 
-   ```
-   SLACK_SIGNING_SECRET=
-   SLACK_BOT_TOKEN=
-   CLOUDFLARE_API_KEY=
-   SLACK_APP_TOKEN=
-   CLOUDFLARE_ZONE_ID=
-   ```
+Copy the example configuration files:
 
-   You can get these values by making a new app in [Slack](https://api.slack.com/apps) and creating a new app with the following bot scopes:
+```bash
+cp src/config.example.js src/config.js
+cp .env.example .env
+```
 
-   ```
-   channels:history
-   chat:write
-   im:write
-   commands
-   im:history
-   ```
+Fill in the required values in the `.env` file:
 
-   You must enable socket mode, and create an app token.
+- `SLACK_SIGNING_SECRET=`
+- `SLACK_BOT_TOKEN=`
+- `CLOUDFLARE_API_KEY=`
+- `SLACK_APP_TOKEN=`
+- `CLOUDFLARE_ZONE_ID=`
 
-   Then you must add event subscriptions for the following scopes:
+You can obtain these values by creating a new app on [Slack](https://api.slack.com/apps) and setting up the following bot scopes:
 
-   ```
-   app_home_opened
-   message.im
-   message.channels
-   ```
+- `channels:history`
+- `chat:write`
+- `im:write`
+- `commands`
+- `im:history`
 
-   For cloudflare, you must create a new API token with the following permissions:
+### Step 4: Start the Bot
 
-   ```
-   Zone.DNS.Edit
-   Zone.Zone.Read
-   ```
+Start the bot by running:
 
-5. Start the bot:
-   ```
-   node src/index.js
-   ```
+```
+node src/index.js
+```
 
 ## Usage
 
-- Send a message in Slack with the format `hello.is-a-furry.dev` or `hello.is-a-furry.net`.
-- The bot will prompt you for the DNS record you want to set up.
-- Follow the instructions provided by the bot to complete the setup.
+To use the bot, simply send a message in Slack with the format `<domain_name>`. The bot will prompt you for the DNS record you want to set up. Follow the instructions provided by the bot to complete
+the setup.
+
+### Examples:
+
+- `hello.is-a-furry.dev`
+- `hello.is-a-furry.net`

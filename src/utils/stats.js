@@ -1,4 +1,4 @@
-const { readUserData } = require('./storage');
+const { readUserData, saveUserData } = require('./storage');
 
 const getDomainStats = async () => {
   const userData = await readUserData();

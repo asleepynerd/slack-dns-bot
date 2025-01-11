@@ -40,9 +40,51 @@ slack-dns-bot
    yarn
    ```
 
-3. Configure your API keys in `.env`.
+3. Configure your config:
 
-4. Start the bot:
+   ```bash
+   cp src/config.example.js src/config.js
+   cp .env.example .env
+   ```
+
+4. Fill in the required values in the `.env` file:
+
+   ```
+   SLACK_SIGNING_SECRET=
+   SLACK_BOT_TOKEN=
+   CLOUDFLARE_API_KEY=
+   SLACK_APP_TOKEN=
+   CLOUDFLARE_ZONE_ID=
+   ```
+
+   You can get these values by making a new app in [Slack](https://api.slack.com/apps) and creating a new app with the following bot scopes:
+
+   ```
+   channels:history
+   chat:write
+   im:write
+   commands
+   im:history
+   ```
+
+   You must enable socket mode, and create an app token.
+
+   Then you must add event subscriptions for the following scopes:
+
+   ```
+   app_home_opened
+   message.im
+   message.channels
+   ```
+
+   For cloudflare, you must create a new API token with the following permissions:
+
+   ```
+   Zone.DNS.Edit
+   Zone.Zone.Read
+   ```
+
+5. Start the bot:
    ```
    node src/index.js
    ```

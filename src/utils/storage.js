@@ -54,4 +54,6 @@ const getUserDomains = async (userId) => {
 module.exports = {
   addUserDomain,
   getUserDomains,
+  readUserData,
+  saveUserData,
 };

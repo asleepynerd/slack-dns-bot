@@ -17,6 +17,116 @@ require("dotenv").config();
 const cron = require("node-cron");
 const { getDomainStats } = require("./utils/stats");
 
+const generateHomeBlocks = async (userId) => {
+  const userDomains = await getUserDomains(userId);
+
+  const domainBlocks = userDomains
+    .map((domain) => [
+      {
+        type: "divider",
+      },
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text:
+            `*${domain.domain}*\n` +
+            `Type: \`${domain.recordType}\`\n` +
+            `Points to: \`${domain.content}\`\n` +
+            `Created: <!date^${Math.floor(
+              new Date(domain.createdAt).getTime() / 1000
+            )}^{date_pretty} at {time}|${domain.createdAt}>`,
+        },
+        accessory: {
+          type: "button",
+          text: {
+            type: "plain_text",
+            text: "Edit Record",
+            emoji: true,
+          },
+          action_id: "edit_domain_record",
+          value: JSON.stringify({
+            domain: domain.domain,
+            recordType: domain.recordType,
+            content: domain.content,
+          }),
+        },
+      },
+      {
+        type: "actions",
+        elements: [
+          {
+            type: "button",
+            text: {
+              type: "plain_text",
+              text: "🗑️ Delete Record",
+              emoji: true,
+            },
+            action_id: "delete_domain_record",
+            style: "danger",
+            value: JSON.stringify({
+              domain: domain.domain,
+              recordType: domain.recordType,
+            }),
+            confirm: {
+              title: {
+                type: "plain_text",
+                text: "Delete DNS Record?",
+              },
+              text: {
+                type: "plain_text",
+                text: `Are you sure you want to delete ${domain.domain}?`,
+              },
+              confirm: {
+                type: "plain_text",
+                text: "Yes, Delete",
+              },
+              deny: {
+                type: "plain_text",
+                text: "Cancel",
+              },
+              style: "danger",
+            },
+          },
+        ],
+      },
+    ])
+    .flat();
+
+  return [
+    {
+      type: "header",
+      text: {
+        type: "plain_text",
+        text: "🌐 Your Registered Domains",
+        emoji: true,
+      },
+    },
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `You have *${userDomains.length}* registered domain${
+          userDomains.length !== 1 ? "s" : ""
+        }.`,
+      },
+    },
+    ...domainBlocks,
+    {
+      type: "divider",
+    },
+    {
+      type: "context",
+      elements: [
+        {
+          type: "mrkdwn",
+          text: "Need help? Contact <@U082FBF4MV5> for assistance.",
+        },
+      ],
+    },
+  ];
+};
+
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,

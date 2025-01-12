@@ -22,7 +22,7 @@ const config = {
     "drinks-tea.uk": process.env.CLOUDFLARE_ZONE_ID_DRINKS_TEA_UK,
     "doesnt-give-a-fuck.org":
       process.env.CLOUDFLARE_ZONE_ID_DOESNT_GIVE_A_FUCK_ORG,
-    "boredom.dev": process.env.CLOUDFLARE_ZONE_ID_BORED_DEV,
+    "boredom.dev": process.env.CLOUDFLARE_ZONE_ID_BOREDOM_DEV,
   },
 };
 

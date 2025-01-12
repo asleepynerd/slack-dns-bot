@@ -179,6 +179,7 @@ const getStickyMessage = async () => {
             "• `.floofy.pw`\n" +
             "• `.died.pw`\n" +
             "• `.woah.pw`\n" +
+            "• `.boredom.dev`\n" +
             "• `.trying.cloud`\n" +
             "• `.loves-being-a.dev`\n" +
             "• `.cant-be-asked.dev`\n" +
@@ -276,7 +277,7 @@ app.message(async ({ message, client }) => {
   }
 
   const domainPattern =
-    /^[a-zA-Z0-9-_]+(\.[a-zA-Z0-9-_]+)*\.(is-a-furry\.(dev|net)|sleeping\.wtf|asleep\.pw|wagging\.dev|furries\.pw|fluff\.pw|floofy\.pw|died\.pw|woah\.pw|trying\.cloud|loves-being-a\.dev|cant-be-asked\.dev|drinks-tea\.uk|doesnt-give-a-fuck\.org)$/i;
+    /^[a-zA-Z0-9-_]+(\.[a-zA-Z0-9-_]+)*\.(is-a-furry\.(dev|net)|sleeping\.wtf|asleep\.pw|wagging\.dev|furries\.pw|fluff\.pw|floofy\.pw|died\.pw|woah\.pw|trying\.cloud|loves-being-a\.dev|cant-be-asked\.dev|drinks-tea\.uk|doesnt-give-a-fuck\.org|boredom\.dev)$/i;
 
   if (domainPattern.test(domain)) {
     try {

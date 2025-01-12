@@ -3,16 +3,14 @@ const axios = require("axios");
 require("dotenv").config();
 
 const CLOUDFLARE_API_URL = "https://api.cloudflare.com/client/v4";
-const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN; 
+const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
 
 const getZoneIdForDomain = (domain) => {
-  
   const parts = domain.split(".");
   const baseDomain =
     parts.length > 2 ? parts.slice(-3).join(".") : parts.slice(-2).join(".");
   return config.cloudflareZones[baseDomain];
 };
-
 
 for (const key in config.cloudflareZones) {
   console.log(`CLOUDFLARE_ZONE_ID for ${key}: ${config.cloudflareZones[key]}`);
@@ -32,22 +30,20 @@ const createDNSRecord = async (
   recordType,
   content,
   userId,
-  proxied = false
+  proxied = false,
+  priority
 ) => {
   try {
-    
     if (typeof domain !== "string") {
       throw new Error("Domain must be a string");
     }
 
-    
     const parts = domain.split(".");
     const baseDomain =
       parts.length > 2
         ? `${parts[parts.length - 2]}.${parts[parts.length - 1]}`
         : domain;
 
-    
     const zoneId = config.cloudflareZones[baseDomain];
     if (!zoneId) {
       throw new Error(`No zone ID found for domain: ${baseDomain}`);
@@ -60,7 +56,8 @@ const createDNSRecord = async (
         name: domain,
         content: content,
         proxied: proxied,
-        comment: `Created by Slack user: ${userId}`, 
+        comment: `Created by Slack user: ${userId}`,
+        priority: priority,
       },
       {
         headers: {
@@ -95,7 +92,6 @@ const listDNSRecords = async (zoneId) => {
   return response.data;
 };
 
-
 const isDomainTaken = async (domain) => {
   try {
     const parts = domain.split(".");
@@ -128,7 +124,6 @@ const deleteDNSRecord = async (domain) => {
       throw new Error(`No zone ID found for domain: ${baseDomain}`);
     }
 
-    
     const records = await axios.get(
       `${CLOUDFLARE_API_URL}/zones/${zoneId}/dns_records`,
       {
@@ -143,7 +138,6 @@ const deleteDNSRecord = async (domain) => {
       throw new Error(`No DNS record found for ${domain}`);
     }
 
-    
     await axios.delete(
       `${CLOUDFLARE_API_URL}/zones/${zoneId}/dns_records/${record.id}`,
       {
@@ -162,29 +156,28 @@ const deleteDNSRecord = async (domain) => {
 
 const updateDNSRecord = async (domain, recordType, content, userId) => {
   try {
-    const parts = domain.split('.');
-    const baseDomain = parts.length > 2 
-      ? `${parts[parts.length-2]}.${parts[parts.length-1]}`
-      : domain;
+    const parts = domain.split(".");
+    const baseDomain =
+      parts.length > 2
+        ? `${parts[parts.length - 2]}.${parts[parts.length - 1]}`
+        : domain;
 
     const zoneId = config.cloudflareZones[baseDomain];
-    
-    
+
     const records = await axios.get(
       `${CLOUDFLARE_API_URL}/zones/${zoneId}/dns_records`,
       {
         headers: {
-          'Authorization': `Bearer ${CLOUDFLARE_API_TOKEN}`
-        }
+          Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
+        },
       }
     );
 
-    const record = records.data.result.find(r => r.name === domain);
+    const record = records.data.result.find((r) => r.name === domain);
     if (!record) {
       throw new Error(`No existing record found for ${domain}`);
     }
 
-    
     await axios.put(
       `${CLOUDFLARE_API_URL}/zones/${zoneId}/dns_records/${record.id}`,
       {
@@ -192,19 +185,19 @@ const updateDNSRecord = async (domain, recordType, content, userId) => {
         name: domain,
         content: content,
         proxied: record.proxied,
-        comment: `Updated by Slack user: ${userId}`
+        comment: `Updated by Slack user: ${userId}`,
       },
       {
         headers: {
-          'Authorization': `Bearer ${CLOUDFLARE_API_TOKEN}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
+          "Content-Type": "application/json",
+        },
       }
     );
 
     return true;
   } catch (error) {
-    console.error('DNS Record Update Error:', error);
+    console.error("DNS Record Update Error:", error);
     throw new Error(`Failed to update DNS record: ${error.message}`);
   }
 };

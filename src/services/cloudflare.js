@@ -93,20 +93,40 @@ const listDNSRecords = async (zoneId) => {
 };
 
 const isDomainTaken = async (domain) => {
+  console.log(`Checking if domain ${domain} is taken...`);
+
   try {
     const parts = domain.split(".");
-    const baseDomain =
-      parts.length > 2
-        ? `${parts[parts.length - 2]}.${parts[parts.length - 1]}`
-        : domain;
+    const tld = parts.pop();
+    const sld = parts.pop();
+    const baseDomain = `${sld}.${tld}`;
 
+    console.log(`Base domain: ${baseDomain}`);
     const zoneId = config.cloudflareZones[baseDomain];
-    if (!zoneId) return false;
 
-    const records = await listDNSRecords(zoneId);
-    return records.result.some((record) => record.name === domain);
+    if (!zoneId) {
+      console.log(`No zone ID found for ${baseDomain}`);
+      return false;
+    }
+
+    const response = await axios.get(
+      `${CLOUDFLARE_API_URL}/zones/${zoneId}/dns_records`,
+      {
+        headers: {
+          Authorization: `Bearer ${CLOUDFLARE_API_TOKEN}`,
+        },
+      }
+    );
+
+    const records = response.data.result;
+    console.log(`Found ${records.length} DNS records in zone`);
+
+    const taken = records.some((record) => record.name === domain);
+    console.log(`Domain ${domain} taken: ${taken}`);
+
+    return taken;
   } catch (error) {
-    console.error("Domain check error:", error);
+    console.error("Error checking domain:", error);
     return false;
   }
 };
@@ -204,7 +224,7 @@ const updateDNSRecord = async (domain, recordType, content, userId) => {
 
 module.exports = {
   createDNSRecord,
-  listDNSRecords,
+    listDNSRecords,
   getZoneIdForDomain,
   isDomainTaken,
   deleteDNSRecord,

@@ -3,6 +3,7 @@ const {
   createDNSRecord,
   isDomainTaken,
   deleteDNSRecord,
+  updateDNSRecord,
 } = require("./services/cloudflare");
 const { addUserDomain, getUserDomains } = require("./utils/storage");
 const fs = require("fs/promises");
@@ -160,7 +161,7 @@ app.message(async ({ message, client }) => {
   }
 
   const domainPattern =
-    /^[a-zA-Z0-9-]+\.(is-a-furry\.(dev|net)|sleeping\.wtf|asleep\.pw|wagging\.dev|furries\.pw|fluff\.pw|floofy\.pw|died\.pw|woah\.pw|trying\.cloud|loves-being-a\.dev|cant-be-asked\.dev|drinks-tea\.uk|doesnt-give-a-fuck\.org)$/i;
+    /^[a-zA-Z0-9-_]+(\.[a-zA-Z0-9-_]+)*\.(is-a-furry\.(dev|net)|sleeping\.wtf|asleep\.pw|wagging\.dev|furries\.pw|fluff\.pw|floofy\.pw|died\.pw|woah\.pw|trying\.cloud|loves-being-a\.dev|cant-be-asked\.dev|drinks-tea\.uk|doesnt-give-a-fuck\.org)$/i;
 
   if (domainPattern.test(domain)) {
     try {
@@ -185,7 +186,7 @@ app.message(async ({ message, client }) => {
         return;
       }
 
-      if (!isDomainTaken(domain)) {
+      if (await isDomainTaken(domain)) {
         await client.chat.postMessage({
           channel: message.channel,
           //thread_ts: threadTs,

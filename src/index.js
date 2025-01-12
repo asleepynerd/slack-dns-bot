@@ -5,7 +5,12 @@ const {
   deleteDNSRecord,
   updateDNSRecord,
 } = require("./services/cloudflare");
-const { addUserDomain, getUserDomains } = require("./utils/storage");
+const {
+  addUserDomain,
+  getUserDomains,
+  readUserData,
+  saveUserData,
+} = require("./utils/storage");
 const fs = require("fs/promises");
 const path = require("path");
 require("dotenv").config();
